@@ -25,6 +25,12 @@
             --typewriter-steps: 28;
             --sub-typewriter-speed: 3.5s;
             --sub-typewriter-steps: 52;
+            --film-speed: 6s;
+            /* Speed of film reel */
+            --film-height: 150px;
+            /* Height of the film reel */
+            --film-width: 200px;
+            /* Width of the film reel image*/
         }
 
         body {
@@ -58,39 +64,47 @@
             /* Hide preloader scrollbars too */
         }
 
-        .preloader-image-container {
+        .film-reel-container {
             position: absolute;
-            /* Absolute positioning */
-            width: 200px;
-            /* Adjust as needed */
-            height: 150px;
-            /* Adjust as needed, maintain aspect ratio */
+            width: 100%;
+            height: var(--film-height);
+            /* Use CSS variable */
             overflow: hidden;
-            /* Hide overflow of images */
-            animation: moveFilmStrip 8s linear infinite;
-            /* Animate the container */
+            display: flex;
+            /* Use flexbox for horizontal layout */
+        }
 
+        .film-reel-container.top {
+            top: 20px;
+            /* Adjust top spacing as needed */
+            animation: moveFilmReelLeftToRight var(--film-speed) linear infinite;
+            /* Add this animation*/
+        }
+
+        .film-reel-container.bottom {
+            bottom: 20px;
+            /* Adjust bottom spacing */
+            animation: moveFilmReelRightToLeft var(--film-speed) linear infinite;
+            /* Add animation*/
         }
 
         .preloader-image {
-            position: absolute;
-            /* Absolute position inside container*/
-            top: 0;
-            left: 0;
-            width: 100%;
-            /* Image fills the container */
-            height: 100%;
-            /* Image fills the container */
+            width: var(--film-width);
+            /* Use CSS Variable*/
+            height: var(--film-height);
             background-size: cover;
-            /* Cover the container */
-            opacity: 0.9;
-            /* Slightly less opaque*/
-            will-change: transform;
-            /* Optimize for animation */
-
+            flex-shrink: 0;
+            /* Prevent images from shrinking */
+            margin-right: 10px;
+            /* Spacing between images */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            /* Optional: Add a shadow */
+            border: 3px solid #333;
+            /* Film border */
+            border-radius: 5px;
+            /* Slightly rounded corners */
         }
 
-        /* Main Content Styles */
         .main-content {
             text-align: center;
             z-index: 5;
@@ -100,10 +114,8 @@
             margin: auto;
             transform-style: preserve-3d;
             display: none;
-            /* Initially hidden */
         }
 
-        /* Logo Styles */
         .logo {
             font-size: 7rem;
             font-weight: bold;
@@ -152,10 +164,7 @@
             transform: translateZ(60px);
             white-space: nowrap;
             overflow: hidden;
-            /*border-right: .15em solid var(--accent-blue); Removed border */
             animation: typeTagline var(--typewriter-speed) steps(var(--typewriter-steps), end) 0s forwards;
-            /* blinkCaret .75s step-end infinite;  Removed blinking */
-            /* Start instantly */
         }
 
         .tagline-sub {
@@ -165,10 +174,7 @@
             transform: translateZ(50px);
             overflow: hidden;
             white-space: nowrap;
-            /*border-right: 3px solid var(--accent-blue); Removed border*/
             animation: typeSubTagline var(--sub-typewriter-speed) steps(var(--sub-typewriter-steps), end) 0s forwards;
-            /*blinkCaretSub .75s step-end infinite;  Removed blinking*/
-            /* Start instantly */
             opacity: 1;
         }
 
@@ -626,19 +632,27 @@
             }
         }
 
-        /* REMOVED blinking caret animations */
-
-        /* Image Preloader Animation - FILM STRIP */
-        @keyframes moveFilmStrip {
+        /* Film Reel Animations */
+        @keyframes moveFilmReelLeftToRight {
             0% {
-                transform: translateY(0);
+                transform: translateX(-100%);
             }
 
             100% {
-                /* Move up by the height of *all* images + spacing */
-                transform: translateY(calc(-100% * var(--num-images) - (var(--num-images) - 1) * var(--image-spacing)));
+                transform: translateX(100%);
             }
         }
+
+        @keyframes moveFilmReelRightToLeft {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -674,11 +688,14 @@
                 right: -125px;
             }
 
-            .preloader-image-container {
-                width: 150px;
+            .film-reel-container {
                 height: 100px;
+                /* Smaller on mobile */
             }
 
+            .preloader-image {
+                width: 150px;
+            }
         }
     </style>
 </head>
@@ -686,7 +703,7 @@
 <body>
     <!-- Preloader -->
     <div class="preloader" id="preloader">
-        <!-- Images will be added here dynamically -->
+        <!-- Film reel containers will be added here -->
     </div>
 
     <!-- Main Content -->
@@ -726,33 +743,34 @@
         document.addEventListener('DOMContentLoaded', function () {
             const preloader = document.getElementById('preloader');
             const mainContent = document.getElementById('mainContent');
-            const numImages = 8;
+            const numImages = 8; //  Now only 8 images
             const imageDir = 'demo_images/';
             const tagline = document.querySelector('.tagline');
             const taglineSub = document.querySelector('.tagline-sub');
 
-            // --- Preloader Image Setup ---
-            for (let i = 1; i <= numImages; i++) {
-                const container = document.createElement('div');
-                container.classList.add('preloader-image-container');
-                // Randomize position *within* the viewport
-                let x = Math.random() * (window.innerWidth - 200);  // Consider container width
-                let y = Math.random() * (window.innerHeight - 150); // Consider container height
-                container.style.left = `${x}px`; // Use px for absolute positioning
-                container.style.top = `${y}px`;
-                container.style.setProperty('--num-images', numImages); // Set CSS variable
-                container.style.setProperty('--image-spacing', '10px'); // Set spacing
+            // Create film reel containers
+            const filmReelTop = document.createElement('div');
+            filmReelTop.classList.add('film-reel-container', 'top');
+            preloader.appendChild(filmReelTop);
 
-                const img = document.createElement('div'); // Use a div for background image
+            const filmReelBottom = document.createElement('div');
+            filmReelBottom.classList.add('film-reel-container', 'bottom');
+            preloader.appendChild(filmReelBottom);
+
+            // Add images to film reels
+            for (let i = 1; i <= numImages; i++) {
+                const img = document.createElement('div');
                 img.classList.add('preloader-image');
                 img.style.backgroundImage = `url(${imageDir}${String(i).padStart(3, '0')}.webp)`;
-                img.style.left = '0';  // Position images at the start of their container
-                img.style.top = '0';
 
-
-                container.appendChild(img);
-                preloader.appendChild(container);
+                // Alternate between top and bottom reels
+                if (i <= numImages / 2) {
+                    filmReelTop.appendChild(img);
+                } else {
+                    filmReelBottom.appendChild(img);
+                }
             }
+
 
             // Calculate animation durations based on CSS variables
             const logoFadeInDuration = 2000; // Fixed 2s for logo
@@ -762,6 +780,7 @@
 
             // Total delay calculation -  This is the *minimum* delay before showing main content.
             const totalDelay = logoFadeInDuration + taglineTypeDuration + subtaglineTypeDuration + buttonFadeInDuration;
+
 
             // Use Promise.all to coordinate animations
             Promise.all([
@@ -790,7 +809,6 @@
                     document.body.style.overflow = 'hidden'; // Keep scrollbars hidden
                 }, buttonFadeInDuration); // Wait for button fade-in
             });
-
 
 
             document.getElementById('startButton').addEventListener('click', function () {
