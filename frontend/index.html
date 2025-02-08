@@ -25,18 +25,13 @@
             --typewriter-steps: 28;
             --sub-typewriter-speed: 3.5s;
             --sub-typewriter-steps: 52;
-            --film-speed: 8s;
+            --film-speed: 12s;
             /* Slower film speed */
             --film-height: 300px;
-            /* Much larger images */
             --film-width: 400px;
-            /* Maintain aspect ratio */
             --film-spacing: 20px;
-            /* More spacing */
             --hole-spacing: 20px;
-            /* Spacing between holes */
             --hole-size: 10px;
-            /* Size of the holes */
         }
 
         body {
@@ -84,23 +79,30 @@
         .film-reel-container {
             position: absolute;
             width: 100%;
+            /* Full width */
             height: var(--film-height);
             overflow: hidden;
             display: flex;
             z-index: 2;
         }
 
-        /* Move towards the center */
+        /* Center film reels */
         .film-reel-container.top {
             top: calc(50% - var(--film-height) - 50px);
-            /* Adjust spacing */
+            /* Center and space */
+            transform: translateX(calc(-100% * (var(--num-images) / 2) - (var(--num-images) / 2 - 1) * var(--film-spacing)));
+            /* Start off-screen to the left*/
             animation: moveFilmReelLeftToRight var(--film-speed) linear infinite;
+
         }
 
         .film-reel-container.bottom {
             bottom: calc(50% - var(--film-height) - 50px);
-            /* Adjust spacing*/
+            /* Center and space*/
+            transform: translateX(0);
+            /* Start from the far right*/
             animation: moveFilmReelRightToLeft var(--film-speed) linear infinite;
+
         }
 
         .preloader-image {
@@ -111,9 +113,7 @@
             margin-right: var(--film-spacing);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
             border: 12px solid #444;
-            /* Much thicker border */
             border-radius: 12px;
-            /* More rounded */
             position: relative;
             /* For the holes */
         }
@@ -123,16 +123,12 @@
             content: '';
             position: absolute;
             top: -8px;
-            /* Position above the top border */
             left: 0;
             width: 100%;
             height: 8px;
-            /* Height of the hole strip */
             display: flex;
             justify-content: space-around;
-            /* Evenly space holes */
             padding: 0 calc(var(--film-width) / 12);
-            /* Inset the holes */
             z-index: 3;
 
         }
@@ -141,7 +137,6 @@
             content: '';
             position: absolute;
             bottom: -8px;
-            /* Below bottom border */
             left: 0;
             width: 100%;
             height: 8px;
@@ -151,16 +146,14 @@
             z-index: 3;
         }
 
-        /* Single hole */
+        /* hole */
         .hole {
             width: var(--hole-size);
-            /* Use CSS variable */
             height: var(--hole-size);
             background-color: #222;
             border-radius: 50%;
 
         }
-
 
         /* Main Content Styles */
         .main-content {
@@ -172,6 +165,7 @@
             margin: auto;
             transform-style: preserve-3d;
             display: none;
+            /* Initially hidden */
         }
 
         .logo {
@@ -223,6 +217,7 @@
             white-space: nowrap;
             overflow: hidden;
             animation: typeTagline var(--typewriter-speed) steps(var(--typewriter-steps), end) 0s forwards;
+            /* Start instantly */
         }
 
         .tagline-sub {
@@ -233,6 +228,7 @@
             overflow: hidden;
             white-space: nowrap;
             animation: typeSubTagline var(--sub-typewriter-speed) steps(var(--sub-typewriter-steps), end) 0s forwards;
+            /* Start instantly */
             opacity: 1;
         }
 
@@ -253,7 +249,7 @@
             transform: translateZ(80px);
             opacity: 0;
             animation: fadeInButton 1s forwards;
-            /* No delay, but controlled by JS */
+            /* No delay, controlled by JS */
         }
 
         .btn-start:hover {
@@ -693,27 +689,27 @@
         /* Film Reel Animations */
         @keyframes moveFilmReelLeftToRight {
             0% {
-                transform: translateX(calc(-100% * (var(--num-images) / 2) - (var(--num-images) / 2 - 1) * var(--film-spacing)));
+                /* Start off-screen to the left */
+                transform: translateX(calc(-100% - var(--film-spacing)));
             }
 
             100% {
-                transform: translateX(0);
-                /* Only move to the start, then repeat*/
+                transform: translateX(100vw);
+                /* Move completely off-screen to the right */
             }
         }
 
         @keyframes moveFilmReelRightToLeft {
             0% {
-                transform: translateX(0);
-                /*Start from 0 */
+                transform: translateX(100vw);
+                /* Start off-screen to the right*/
             }
 
             100% {
-                transform: translateX(calc(-100% * (var(--num-images) / 2) - (var(--num-images) / 2 - 1) * var(--film-spacing)));
-                /* Move left */
+                transform: translateX(calc(-100% - var(--film-spacing)));
+                /* Move completely off-screen to the left */
             }
         }
-
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -898,6 +894,7 @@
             filmReelTop.classList.add('film-reel-container', 'top');
             preloader.appendChild(filmReelTop);
 
+
             const filmReelBottom = document.createElement('div');
             filmReelBottom.classList.add('film-reel-container', 'bottom');
             preloader.appendChild(filmReelBottom);
@@ -925,10 +922,13 @@
                 } else {
                     filmReelBottom.appendChild(imgContainer);
                 }
-                filmReelTop.style.setProperty('--num-images', numImages);
-                filmReelBottom.style.setProperty('--num-images', numImages);
-            }
 
+            }
+            // Set CSS variables for animation
+            filmReelTop.style.setProperty('--num-images', numImages);
+            filmReelTop.style.setProperty('--film-spacing', getComputedStyle(document.documentElement).getPropertyValue('--film-spacing'));
+            filmReelBottom.style.setProperty('--num-images', numImages);
+            filmReelBottom.style.setProperty('--film-spacing', getComputedStyle(document.documentElement).getPropertyValue('--film-spacing'));
 
             // Calculate animation durations based on CSS variables
             const logoFadeInDuration = 2000; // Fixed 2s for logo
@@ -966,7 +966,6 @@
                     document.body.style.overflow = 'hidden'; // Keep scrollbars hidden
                 }, buttonFadeInDuration); // Wait for button fade-in
             });
-
 
             document.getElementById('startButton').addEventListener('click', function () {
                 window.location.href = "ad_form.html";
