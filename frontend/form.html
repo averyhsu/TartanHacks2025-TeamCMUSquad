@@ -21,7 +21,7 @@
             --glow-color: rgba(0, 191, 255, 0.7);
             --shadow-color: rgba(0, 0, 0, 0.7);
             --form-bg: rgba(255, 255, 255, 0.1);
-            /* Semi-transparent white for glassmorphism */
+            /* Semi-transparent white */
             --form-border: rgba(255, 255, 255, 0.2);
             /* Light border */
             --input-bg: rgba(0, 0, 0, 0.3);
@@ -42,7 +42,6 @@
 
         html {
             height: 100%;
-            /* Make html fill the viewport height */
         }
 
         body {
@@ -55,48 +54,38 @@
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
-            /* Prevent horizontal scroll */
             height: 100%;
-            /* Make body fill the viewport height*/
         }
 
         .container {
-            width: 100%;
-            /* Full width */
+            width: 70%;
+            /*  Set container width to 60% */
             max-width: none;
             /* Remove max-width */
             height: 100%;
-            /* Make container fill the body's height */
             padding: 40px;
             background: var(--form-bg);
             border: 1px solid var(--form-border);
+            /* Removed border-radius for full-screen effect */
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             position: relative;
             overflow-y: auto;
-            /* Add vertical scrollbar if content overflows */
             display: flex;
-            /*  Use flexbox for layout*/
             flex-direction: column;
-            /*  Stack children vertically */
         }
 
         .form-section-wrapper {
             position: relative;
-            /*  For absolute positioning of form-section */
             flex-grow: 1;
-            /*  Allow this to grow and take up available space */
             overflow: hidden;
-            /*  Important for the sliding animation to work */
         }
 
         .form-section {
             padding: 20px 0;
             position: absolute;
-            /* Absolute positioning for sliding */
             top: 0;
-            /*  Start from the top */
             left: 0;
             width: 100%;
             opacity: 0;
@@ -121,23 +110,18 @@
         }
 
         h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
+            text-align: left;
+            margin-bottom: 0.5rem;
             color: var(--accent-blue);
             text-shadow: 0 0 10px var(--glow-color);
             position: relative;
             z-index: 3;
-            /*animation: pulse 2s infinite; REMOVED PULSE*/
             flex-shrink: 0;
-            /* Don't allow title to shrink */
             font-size: 2.5rem;
-            /*  Larger font size */
+            /*  Increased font size */
             white-space: nowrap;
-            /* prevent wrapping */
             overflow: hidden;
-            /* Hide overflow */
-            border-right: 3px solid var(--accent-blue);
-            /*  Cursor effect */
+            /* border-right: 3px solid var(--accent-blue); */
             animation: typeFormTitle var(--form-title-typewriter-speed) steps(var(--form-title-typewriter-steps), end) forwards, blinkCaret .75s step-end infinite;
         }
 
@@ -166,12 +150,10 @@
 
         h3 {
             color: var(--accent-purple);
-            /*  Distinct section heading color */
             margin-bottom: 1rem;
             margin-top: 0;
-            /* Remove default top margin */
             font-size: 1.5rem;
-            /*  Slightly larger than base font-size */
+            /*  Increased font size */
         }
 
         .form-label {
@@ -179,9 +161,7 @@
             margin-bottom: 0.5rem;
             display: block;
             font-size: 1.1rem;
-            /*  Slightly larger font size */
             font-weight: 600;
-            /*  Make labels bold */
         }
 
         .form-control,
@@ -189,19 +169,13 @@
         .form-control-color {
             background: var(--input-bg);
             border: 2px solid var(--accent-blue);
-            /*  Use accent color for borders */
             color: var(--input-text);
             border-radius: 15px;
-            /* More rounded corners */
             padding: 12px 18px;
-            /*  More padding */
             margin-bottom: 1.5rem;
-            /*  More spacing */
             width: 100%;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            /*  Add box-shadow transition */
             font-size: 1rem;
-            /*  Slightly larger font */
         }
 
         .form-control::placeholder {
@@ -213,11 +187,8 @@
         .form-control-color:focus {
             outline: none;
             border-color: var(--accent-purple);
-            /*  Change border color on focus */
             box-shadow: 0 0 8px var(--accent-purple);
-            /*  Add a glow on focus */
         }
-
 
         .btn-container {
             display: flex;
@@ -226,7 +197,12 @@
             position: relative;
             z-index: 3;
             flex-shrink: 0;
-            /*  Prevent buttons from shrinking */
+        }
+
+        /* Style for first section to align right*/
+        .btn-container.first-section {
+            justify-content: flex-end;
+            /* Align to the right */
         }
 
         .btn {
@@ -246,7 +222,6 @@
             transform: translateY(-3px);
             box-shadow: 0 6px 18px rgba(0, 114, 255, 0.5);
         }
-
 
         .color-picker-group {
             display: flex;
@@ -326,12 +301,12 @@
             }
 
             h2 {
-                font-size: 1.8rem;
+                font-size: 2rem;
                 /* Reduce title size on smaller screens */
             }
 
             h3 {
-                font-size: 1.3rem;
+                font-size: 1.5rem;
             }
         }
 
@@ -343,12 +318,12 @@
             }
 
             h2 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
                 /* Further reduce title size */
             }
 
             h3 {
-                font-size: 1.1rem;
+                font-size: 1.3rem;
             }
         }
     </style>
@@ -376,13 +351,11 @@
                     <div>
                         <label class="form-label">Primary Color</label>
                         <input type="color" class="form-control form-control-color" id="primaryColor" value="#4A90E2">
-
                     </div>
 
                     <div>
                         <label class="form-label">Secondary Color</label>
                         <input type="color" class="form-control form-control-color" id="secondaryColor" value="#F5F7FA">
-
                     </div>
 
                 </div>
@@ -526,7 +499,8 @@
 
 
         <!-- Navigation Buttons -->
-        <div class="btn-container">
+        <!--  Apply first-section class conditionally -->
+        <div class="btn-container" id="btnContainer">
             <button class="btn btn-secondary" id="prevBtn" style="display: none;">Previous</button>
             <button class="btn btn-primary" id="nextBtn">Next</button>
         </div>
@@ -538,6 +512,8 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const formTitle = document.getElementById('form-title');
+        const btnContainer = document.getElementById('btnContainer'); // Get the button container
+
 
         const titles = [
             "Let's start by getting some details about your company",
@@ -561,7 +537,6 @@
             type(); // Start the typing effect
         }
 
-
         function showSection(index) {
             // Update title with typewriter effect
             const titleText = titles[index];
@@ -570,7 +545,6 @@
             // Calculate the speed per character.  Total duration is fixed.
             const charSpeed = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--form-title-typewriter-speed')) * 1000) / steps;
             typeWriter(titleText, formTitle, charSpeed);
-
 
             sections.forEach((section, i) => {
                 if (i === index) {
@@ -582,6 +556,13 @@
                 }
             });
 
+            // Add or remove the 'first-section' class based on the current section
+            if (index === 0) {
+                btnContainer.classList.add('first-section');
+            } else {
+                btnContainer.classList.remove('first-section');
+            }
+
             prevBtn.style.display = index === 0 ? 'none' : 'block';
             nextBtn.textContent = index === sections.length - 1 ? 'Generate Campaign' : 'Next';
         }
@@ -592,7 +573,12 @@
                 showSection(currentSectionIndex);
             } else {
                 // Replace with your actual submission logic
-                alert('Form submitted!');
+                // alert('Form submitted!');
+                nextBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+                nextBtn.disabled = true;
+                setTimeout(() => {
+                    window.location.href = "ad.html";
+                }, 5000);
             }
         });
 
@@ -623,6 +609,7 @@
                 }
             }
         });
+
         function handleOtherCategory() {
             const categorySelect = document.getElementById('productCategory');
             const otherCategoryInput = document.getElementById('otherCategoryInput');
