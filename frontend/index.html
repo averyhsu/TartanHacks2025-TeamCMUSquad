@@ -79,29 +79,34 @@
         .film-reel-container {
             position: absolute;
             width: 100%;
+            background-color: #444;
             /* Full width */
             height: var(--film-height);
             /* overflow: hidden; */
             display: flex;
             z-index: 2;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
         }
 
         /* Center film reels */
         .film-reel-container.top {
-            top: calc(50% - var(--film-height) - 50px);
+            top: calc(50% - var(--film-height) - 20px);
             /* Center and space */
             transform: translateX(calc(-100% * (var(--num-images) / 2) - (var(--num-images) / 2 - 1) * var(--film-spacing)));
             /* Start off-screen to the left*/
             animation: moveFilmReelLeftToRight var(--film-speed) linear infinite;
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7); */
 
         }
 
         .film-reel-container.bottom {
-            bottom: calc(50% - var(--film-height) - 50px);
+            bottom: calc(50% - var(--film-height) - 20px);
             /* Center and space*/
             transform: translateX(0);
             /* Start from the far right*/
             animation: moveFilmReelRightToLeft var(--film-speed) linear infinite;
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7); */
 
         }
 
@@ -111,7 +116,7 @@
             background-size: cover;
             flex-shrink: 0;
             margin-right: var(--film-spacing);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7); */
             border: 12px solid #444;
             border-radius: 12px;
             position: relative;
