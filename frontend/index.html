@@ -132,11 +132,13 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Product Category</label>
-                        <select class="form-select">
+                        <select class="form-select" id="productCategory" onchange="handleOtherCategory()">
                             <option>Electronics</option>
                             <option>Fashion</option>
                             <option>Home & Living</option>
+                            <option value="other">Other</option>
                         </select>
+                        <input type="text" class="form-control mt-2 d-none" id="otherCategoryInput" placeholder="Enter custom category">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Target Emotions/Feelings to Evoke</label>
@@ -336,6 +338,17 @@
         function generateAd() {
             // Add ad generation logic here
             alert('Ad campaign generated successfully!');
+        }
+        function handleOtherCategory() {
+            const categorySelect = document.getElementById('productCategory');
+            const otherCategoryInput = document.getElementById('otherCategoryInput');
+            if (categorySelect.value === 'other') {
+                otherCategoryInput.classList.remove('d-none');
+                otherCategoryInput.focus();
+            } else {
+                otherCategoryInput.classList.add('d-none');
+                otherCategoryInput.value = '';
+            }
         }
     </script>
 </body>
