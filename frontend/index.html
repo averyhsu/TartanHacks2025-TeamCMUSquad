@@ -91,7 +91,7 @@
 
 <body>
     <div class="container gradient-bg py-5">
-        <h1 class="text-center mb-5">🎯 Smart Ad Generator</h1>
+        <h1 class="text-center mb-5">AdGenie</h1>
 
         <div class="row g-4">
             <!-- Left Column -->
@@ -291,6 +291,79 @@
 
     <script>
 
+        async function generateAd(e) {
+            e.preventDefault();
+            const formData = new FormData();
+
+            // Brand Details
+            formData.append('brand_details[description]', document.querySelector('.form-section textarea').value);
+            formData.append('brand_details[primary_color]', document.getElementById('primaryColor').value);
+            formData.append('brand_details[secondary_color]', document.getElementById('secondaryColor').value);
+            formData.append('brand_details[tagline]', document.getElementById('tagline').value);
+
+            // Product Information
+            const productInfo = {
+                name: document.querySelectorAll('.form-section textarea')[1].value,
+                description: document.querySelectorAll('.form-section textarea')[2].value,
+                category: document.getElementById('productCategory').value,
+                custom_category: document.getElementById('otherCategoryInput').classList.contains('d-none') ?
+                    '' : document.getElementById('otherCategoryInput').value,
+                target_emotions: document.querySelector('[placeholder="e.g., Excitement, Comfort, Trust, Luxury"]').value.split(', ')
+            };
+            formData.append('product_info', JSON.stringify(productInfo));
+
+            // Target Audience
+            const ageRange = {
+                min: document.querySelector('[placeholder="Min Age"]').value,
+                max: document.querySelector('[placeholder="Max Age"]').value
+            };
+
+            const demographics = {
+                student: document.getElementById('student').checked,
+                parent: document.getElementById('parent').checked,
+                homeowner: document.getElementById('homeowner').checked
+            };
+
+            const targetAudience = {
+                age_range: ageRange,
+                employment_status: document.querySelector('.form-select').value,
+                marital_status: document.querySelectorAll('.form-select')[1].value,
+                occupation: document.querySelectorAll('.form-select')[2].value,
+                mbti_type: document.querySelectorAll('.form-select')[3].value,
+                interests: Array.from(document.querySelectorAll('.tag span')).map(tag => tag.textContent),
+                demographics: demographics,
+                location: document.querySelector('[placeholder="Enter target location"]').value
+            };
+            formData.append('target_audience', JSON.stringify(targetAudience));
+
+            // Files
+            const logoInput = document.getElementById('logoUpload');
+            if (logoInput.files[0]) {
+                formData.append('logo', logoInput.files[0]);
+            }
+
+            const productImagesInput = document.querySelector('[accept="image/*"]');
+            Array.from(productImagesInput.files).forEach((file, index) => {
+                formData.append(`product_images`, file);
+            });
+
+            try {
+                const response = await fetch('/generate-ad/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const result = await response.json();
+                alert('Ad campaign generated successfully!');
+                console.log('Server response:', result);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error generating ad campaign');
+            }
+        }
+
         document.getElementById('logoUpload').addEventListener('change', function (e) {
             const reader = new FileReader();
             reader.onload = function () {
@@ -298,11 +371,6 @@
             }
             reader.readAsDataURL(e.target.files[0]);
         });
-
-        document.getElementById('tagline').addEventListener('input', (e) => {
-            document.getElementById('taglinePreview').textContent = e.target.value;
-        });
-
         // Tag Management
         const interestContainer = document.getElementById('interestContainer');
         const interestInput = document.getElementById('interestInput');
@@ -342,11 +410,6 @@
                 }
             });
         });
-
-        function generateAd() {
-            // Add ad generation logic here
-            alert('Ad campaign generated successfully!');
-        }
         function handleOtherCategory() {
             const categorySelect = document.getElementById('productCategory');
             const otherCategoryInput = document.getElementById('otherCategoryInput');
