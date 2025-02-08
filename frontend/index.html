@@ -25,12 +25,18 @@
             --typewriter-steps: 28;
             --sub-typewriter-speed: 3.5s;
             --sub-typewriter-steps: 52;
-            --film-speed: 6s;
-            /* Speed of film reel */
-            --film-height: 150px;
-            /* Height of the film reel */
-            --film-width: 200px;
-            /* Width of the film reel image*/
+            --film-speed: 8s;
+            /* Slower film speed */
+            --film-height: 300px;
+            /* Much larger images */
+            --film-width: 400px;
+            /* Maintain aspect ratio */
+            --film-spacing: 20px;
+            /* More spacing */
+            --hole-spacing: 20px;
+            /* Spacing between holes */
+            --hole-size: 10px;
+            /* Size of the holes */
         }
 
         body {
@@ -61,50 +67,102 @@
             justify-content: center;
             transition: opacity 1s ease, visibility 1s ease;
             overflow: hidden;
-            /* Hide preloader scrollbars too */
+        }
+
+        .preloader::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, var(--dark-bg) 70%);
+            pointer-events: none;
+            z-index: 11;
         }
 
         .film-reel-container {
             position: absolute;
             width: 100%;
             height: var(--film-height);
-            /* Use CSS variable */
             overflow: hidden;
             display: flex;
-            /* Use flexbox for horizontal layout */
+            z-index: 2;
         }
 
+        /* Move towards the center */
         .film-reel-container.top {
-            top: 20px;
-            /* Adjust top spacing as needed */
+            top: calc(50% - var(--film-height) - 50px);
+            /* Adjust spacing */
             animation: moveFilmReelLeftToRight var(--film-speed) linear infinite;
-            /* Add this animation*/
         }
 
         .film-reel-container.bottom {
-            bottom: 20px;
-            /* Adjust bottom spacing */
+            bottom: calc(50% - var(--film-height) - 50px);
+            /* Adjust spacing*/
             animation: moveFilmReelRightToLeft var(--film-speed) linear infinite;
-            /* Add animation*/
         }
 
         .preloader-image {
             width: var(--film-width);
-            /* Use CSS Variable*/
             height: var(--film-height);
             background-size: cover;
             flex-shrink: 0;
-            /* Prevent images from shrinking */
-            margin-right: 10px;
-            /* Spacing between images */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-            /* Optional: Add a shadow */
-            border: 3px solid #333;
-            /* Film border */
-            border-radius: 5px;
-            /* Slightly rounded corners */
+            margin-right: var(--film-spacing);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+            border: 12px solid #444;
+            /* Much thicker border */
+            border-radius: 12px;
+            /* More rounded */
+            position: relative;
+            /* For the holes */
         }
 
+        /* Film Reel Holes */
+        .preloader-image::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            /* Position above the top border */
+            left: 0;
+            width: 100%;
+            height: 8px;
+            /* Height of the hole strip */
+            display: flex;
+            justify-content: space-around;
+            /* Evenly space holes */
+            padding: 0 calc(var(--film-width) / 12);
+            /* Inset the holes */
+            z-index: 3;
+
+        }
+
+        .preloader-image::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            /* Below bottom border */
+            left: 0;
+            width: 100%;
+            height: 8px;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 calc(var(--film-width) / 12);
+            z-index: 3;
+        }
+
+        /* Single hole */
+        .hole {
+            width: var(--hole-size);
+            /* Use CSS variable */
+            height: var(--hole-size);
+            background-color: #222;
+            border-radius: 50%;
+
+        }
+
+
+        /* Main Content Styles */
         .main-content {
             text-align: center;
             z-index: 5;
@@ -635,21 +693,24 @@
         /* Film Reel Animations */
         @keyframes moveFilmReelLeftToRight {
             0% {
-                transform: translateX(-100%);
+                transform: translateX(calc(-100% * (var(--num-images) / 2) - (var(--num-images) / 2 - 1) * var(--film-spacing)));
             }
 
             100% {
-                transform: translateX(100%);
+                transform: translateX(0);
+                /* Only move to the start, then repeat*/
             }
         }
 
         @keyframes moveFilmReelRightToLeft {
             0% {
-                transform: translateX(100%);
+                transform: translateX(0);
+                /*Start from 0 */
             }
 
             100% {
-                transform: translateX(-100%);
+                transform: translateX(calc(-100% * (var(--num-images) / 2) - (var(--num-images) / 2 - 1) * var(--film-spacing)));
+                /* Move left */
             }
         }
 
@@ -689,12 +750,96 @@
             }
 
             .film-reel-container {
-                height: 100px;
+                height: 150px;
                 /* Smaller on mobile */
             }
 
             .preloader-image {
+                width: 200px;
+                /* Adjust width for smaller screens, keep aspect ratio */
+            }
+
+            /* Adjust film reel positions for smaller screens */
+            .film-reel-container.top {
+                top: calc(50% - var(--film-height) / 2 - 80px);
+            }
+
+            .film-reel-container.bottom {
+                bottom: calc(50% - var(--film-height) / 2 - 80px);
+            }
+
+            .preloader-image::before,
+            .preloader-image::after {
+                padding: 0 calc(var(--film-width) / 10);
+                /* Adjust padding */
+                height: 6px;
+                /* Smaller holes */
+            }
+
+            .preloader-image::before {
+                top: -6px;
+            }
+
+            .preloader-image::after {
+                bottom: -6px;
+            }
+
+            .hole {
+                width: 6px;
+                height: 6px;
+            }
+
+        }
+
+        /* Smaller screens */
+        @media (max-width: 480px) {
+            .film-reel-container {
+                height: 100px;
+                /* Even smaller */
+            }
+
+            .preloader-image {
                 width: 150px;
+                /* Adjust */
+                margin-right: 5px;
+                /* Less spacing */
+            }
+
+            /* Adjust film reel vertical positions */
+            .film-reel-container.top {
+                top: calc(50% - var(--film-height) / 2 - 60px);
+                /* Adjust spacing */
+            }
+
+            .film-reel-container.bottom {
+                bottom: calc(50% - var(--film-height) / 2 - 60px);
+                /* Adjust spacing */
+            }
+
+            .logo {
+                font-size: 4rem;
+                /* Smaller logo */
+            }
+
+            .preloader-image::before,
+            .preloader-image::after {
+                padding: 0 calc(var(--film-width) / 8);
+                /* Adjust padding */
+                height: 5px;
+            }
+
+            .preloader-image::before {
+                top: -5px;
+                /* Adjust hole positions */
+            }
+
+            .preloader-image::after {
+                bottom: -5px;
+            }
+
+            .hole {
+                width: 5px;
+                height: 5px;
             }
         }
     </style>
@@ -743,7 +888,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const preloader = document.getElementById('preloader');
             const mainContent = document.getElementById('mainContent');
-            const numImages = 8; //  Now only 8 images
+            const numImages = 8; //  8 images
             const imageDir = 'demo_images/';
             const tagline = document.querySelector('.tagline');
             const taglineSub = document.querySelector('.tagline-sub');
@@ -759,16 +904,29 @@
 
             // Add images to film reels
             for (let i = 1; i <= numImages; i++) {
-                const img = document.createElement('div');
-                img.classList.add('preloader-image');
-                img.style.backgroundImage = `url(${imageDir}${String(i).padStart(3, '0')}.webp)`;
+                const imgContainer = document.createElement('div'); // Container for image and holes
+                imgContainer.classList.add('preloader-image');
+                imgContainer.style.backgroundImage = `url(${imageDir}${String(i).padStart(3, '0')}.webp)`;
+
+                // Create holes and append to the image container
+                for (let j = 0; j < 10; j++) { // Create 10 holes, for example
+                    const hole = document.createElement('div');
+                    hole.classList.add('hole');
+                    imgContainer.querySelector('::before')?.appendChild(hole); //::before for top
+                    const hole2 = document.createElement('div');
+                    hole2.classList.add('hole');
+                    imgContainer.querySelector('::after')?.appendChild(hole2); //::after for bottom
+                }
+
 
                 // Alternate between top and bottom reels
                 if (i <= numImages / 2) {
-                    filmReelTop.appendChild(img);
+                    filmReelTop.appendChild(imgContainer);
                 } else {
-                    filmReelBottom.appendChild(img);
+                    filmReelBottom.appendChild(imgContainer);
                 }
+                filmReelTop.style.setProperty('--num-images', numImages);
+                filmReelBottom.style.setProperty('--num-images', numImages);
             }
 
 
@@ -780,7 +938,6 @@
 
             // Total delay calculation -  This is the *minimum* delay before showing main content.
             const totalDelay = logoFadeInDuration + taglineTypeDuration + subtaglineTypeDuration + buttonFadeInDuration;
-
 
             // Use Promise.all to coordinate animations
             Promise.all([
