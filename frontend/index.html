@@ -20,6 +20,15 @@
             --accent-gradient-end: #feb47b;
             --glow-color: rgba(0, 191, 255, 0.7);
             --shadow-color: rgba(0, 0, 0, 0.7);
+            /* Typewriter Variables */
+            --typewriter-speed: 1.8s;
+            /* A little faster */
+            --typewriter-steps: 28;
+            /* Slightly fewer steps */
+            --sub-typewriter-speed: 3.5s;
+            /* A little faster */
+            --sub-typewriter-steps: 52;
+            /* Slightly fewer steps*/
         }
 
         body {
@@ -32,7 +41,7 @@
             min-height: 100vh;
             margin: 0;
             overflow: hidden;
-            /* Hide scrollbars during intro */
+            /* Hide scrollbars always */
             perspective: 1200px;
         }
 
@@ -45,27 +54,23 @@
             height: 100%;
             background: var(--dark-bg);
             z-index: 10;
-            /* Higher z-index than everything else */
             display: flex;
             align-items: center;
             justify-content: center;
             transition: opacity 1s ease, visibility 1s ease;
+            /* Smooth transition */
         }
 
         .preloader-image {
             position: absolute;
             width: 150px;
-            /* Initial size */
             height: 100px;
-            /* Maintain aspect ratio */
             background-size: cover;
             animation: moveImage 5s linear infinite;
             opacity: 0.7;
-            /* Adjust as needed */
             will-change: transform, opacity;
             /* Performance optimization */
         }
-
 
         /* Main Content Styles */
         .main-content {
@@ -80,6 +85,7 @@
             /* Initially hidden */
         }
 
+        /* Logo Styles */
         .logo {
             font-size: 7rem;
             font-weight: bold;
@@ -88,9 +94,9 @@
             text-shadow: 0 0 25px var(--glow-color);
             animation: pulse 2.5s infinite;
             transform-style: preserve-3d;
+            position: relative;
             opacity: 0;
             animation: fadeInLogo 2s forwards;
-            position: relative;
         }
 
         .logo::before,
@@ -119,15 +125,18 @@
             animation: glitch2 2s infinite alternate-reverse;
         }
 
+        /* Tagline Styles */
         .tagline {
             font-size: 2.2rem;
             margin-bottom: 1rem;
             color: rgba(255, 255, 255, 0.9);
             letter-spacing: 1.5px;
             transform: translateZ(60px);
-            opacity: 0;
-            animation: fadeInTagline 2s 1s forwards;
             white-space: nowrap;
+            overflow: hidden;
+            border-right: .15em solid var(--accent-blue);
+            animation: typeTagline var(--typewriter-speed) steps(var(--typewriter-steps), end) 0s forwards, blinkCaret .75s step-end infinite;
+            /* Start instantly */
         }
 
         .tagline-sub {
@@ -135,11 +144,15 @@
             color: rgba(255, 255, 255, 0.7);
             margin-bottom: 4rem;
             transform: translateZ(50px);
-            animation: fadeInSubTagline 2s 1.5s forwards;
-            opacity: 0;
-
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid var(--accent-blue);
+            animation: typeSubTagline var(--sub-typewriter-speed) steps(var(--sub-typewriter-steps), end) 0s forwards, blinkCaretSub .75s step-end infinite;
+            /* Start instantly */
+            opacity: 1;
         }
 
+        /* Button Styles */
         .btn-start {
             background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
             color: var(--dark-bg);
@@ -155,7 +168,8 @@
             overflow: hidden;
             transform: translateZ(80px);
             opacity: 0;
-            animation: fadeInButton 1s 2.5s forwards;
+            animation: fadeInButton 1s forwards;
+            /* No delay, but controlled by JS */
         }
 
         .btn-start:hover {
@@ -264,7 +278,7 @@
             top: 85%;
             left: 5%;
             animation-delay: 1.8s;
-            font-size: 0.7rem
+            font-size: 0.7rem;
         }
 
         .star-9 {
@@ -393,30 +407,6 @@
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
-            }
-        }
-
-        @keyframes fadeInTagline {
-            from {
-                opacity: 0;
-                transform: translateZ(60px) translateY(50px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateZ(60px) translateY(0);
-            }
-        }
-
-        @keyframes fadeInSubTagline {
-            from {
-                opacity: 0;
-                transform: translateZ(50px) translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateZ(50px) translateY(0);
             }
         }
 
@@ -595,11 +585,52 @@
             }
         }
 
-        .animated {
-            animation: fadeIn 1.5s ease-out;
+        /* Typewriter Effect */
+        @keyframes typeTagline {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
         }
 
-        /* Image Preloader Animation */
+        @keyframes typeSubTagline {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blinkCaret {
+
+            from,
+            to {
+                border-color: transparent;
+            }
+
+            50% {
+                border-color: var(--accent-blue);
+            }
+        }
+
+        @keyframes blinkCaretSub {
+
+            from,
+            to {
+                border-color: transparent;
+            }
+
+            50% {
+                border-color: var(--accent-blue);
+            }
+        }
+
+        /* Image Preloader */
         @keyframes moveImage {
             0% {
                 transform: translate(-50vw, -50vh) scale(0.5);
@@ -658,19 +689,8 @@
 
             .preloader-image {
                 width: 100px;
-                /* Smaller images on mobile */
                 height: 66px;
             }
-        }
-
-        .element {
-            scrollbar-width: none;
-            /* Hides the scrollbar */
-        }
-
-        .element::-webkit-scrollbar {
-            display: none;
-            /* Hides the scrollbar */
         }
     </style>
 </head>
@@ -689,7 +709,7 @@
         <button class="btn-start" id="startButton">Launch My Campaign</button>
     </div>
 
-    <!-- Background Elements (Stars, Lines, Orbs, Particles) - Keep these outside of .main-content -->
+    <!-- Background Elements -->
     <div class="bg-element star star-1"><i class="fas fa-star"></i></div>
     <div class="bg-element star star-2"><i class="fas fa-star"></i></div>
     <div class="bg-element star star-3"><i class="fas fa-star"></i></div>
@@ -718,35 +738,69 @@
         document.addEventListener('DOMContentLoaded', function () {
             const preloader = document.getElementById('preloader');
             const mainContent = document.getElementById('mainContent');
-            const numImages = 20; //  Number of images.  Make sure you have 01.png to 20.png (at least)
-            const imageDir = 'demo_images/'; // Path to your image directory
+            const numImages = 20;
+            const imageDir = 'demo_images/';
+            const tagline = document.querySelector('.tagline');
+            const taglineSub = document.querySelector('.tagline-sub');
 
-            // Create and add image elements to the preloader
             for (let i = 1; i <= numImages; i++) {
                 const img = document.createElement('div');
                 img.classList.add('preloader-image');
-                img.style.backgroundImage = `url(${imageDir}${String(i).padStart(2, '0')}.png)`;
+                img.style.backgroundImage = `url(${imageDir}${String(i).padStart(3, '0')}.png)`;
 
-                // Randomize initial position and animation delay
-                img.style.left = `${Math.random() * 100}vw`;
-                img.style.top = `${Math.random() * 100}vh`;
-                img.style.animationDelay = `${Math.random() * 5}s`; //  Vary the animation delay
+                // Keep images within viewport
+                let x = Math.random() * 100;
+                let y = Math.random() * 100;
+                x = Math.max(0, Math.min(x, 90));
+                y = Math.max(0, Math.min(y, 90));
+                img.style.left = `${x}vw`;
+                img.style.top = `${y}vh`;
 
+                img.style.animationDelay = `${Math.random() * 5}s`;
                 preloader.appendChild(img);
             }
 
-            // Simulate loading time (you can replace this with actual loading logic)
-            setTimeout(() => {
-                preloader.style.opacity = '0';
-                preloader.style.visibility = 'hidden';
-                mainContent.style.display = 'block';
-                document.body.style.overflow = 'auto';
+            // Calculate animation durations based on CSS variables
+            const logoFadeInDuration = 2000; // Fixed 2s for logo
+            const taglineTypeDuration = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--typewriter-speed')) * 1000;
+            const subtaglineTypeDuration = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sub-typewriter-speed')) * 1000;
+            const buttonFadeInDuration = 1000;
 
-            }, 6000); //  6 seconds preloader duration
+            // Total delay calculation
+            const totalDelay = logoFadeInDuration + taglineTypeDuration + subtaglineTypeDuration + buttonFadeInDuration;
 
-            // Event listener for button
+            // Use Promise.all to coordinate animations
+            Promise.all([
+                new Promise(resolve => setTimeout(resolve, logoFadeInDuration)), // Logo
+                new Promise(resolve => {
+                    setTimeout(() => {
+                        // tagline.style.opacity = 1; // Make tagline visible
+                        resolve();
+                    }, logoFadeInDuration);
+                }),
+                new Promise(resolve => {
+                    setTimeout(() => {
+                        //taglineSub.style.opacity = 1; // Make sub-tagline visible
+                        resolve();
+                    }, logoFadeInDuration + taglineTypeDuration); //After tagline.
+                }),
+                new Promise(resolve => setTimeout(resolve, logoFadeInDuration + taglineTypeDuration + subtaglineTypeDuration)), // Wait for all text animations
+            ]).then(() => {
+                // All animations complete, now show the button.
+                document.querySelector('.btn-start').style.opacity = 1;
+
+                // Hide preloader and show main content AFTER button is visible.
+                setTimeout(() => {
+                    preloader.style.opacity = '0';
+                    preloader.style.visibility = 'hidden';
+                    mainContent.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }, buttonFadeInDuration); // Wait for button fade-in
+            });
+
+
             document.getElementById('startButton').addEventListener('click', function () {
-                window.location.href = "ad_form.html"; // IMPORTANT: Change to your form page
+                window.location.href = "ad_form.html";
             });
         });
     </script>
