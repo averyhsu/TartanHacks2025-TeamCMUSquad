@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ad Campaign Generator</title>
+    <title>Advanced Ad Campaign Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
@@ -39,21 +39,40 @@
             transition: transform 0.3s ease;
         }
 
-        .preview-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .color-picker {
+        .tag-input {
             display: flex;
-            gap: 1rem;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
         }
 
-        .demo-box {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            border: 2px solid #ddd;
+        .tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .age-range-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .dynamic-field-group {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         }
 
         .preview-ad {
@@ -75,13 +94,19 @@
         <h1 class="text-center mb-5">🎯 Smart Ad Generator</h1>
 
         <div class="row g-4">
-            <!-- Brand Section -->
+            <!-- Left Column -->
             <div class="col-lg-6">
+                <!-- Brand Section -->
                 <div class="form-section">
                     <h3>🛍 Brand Details</h3>
                     <div class="mb-3">
                         <label class="form-label">Company Logo</label>
                         <input type="file" class="form-control" id="logoUpload" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Brand Description</label>
+                        <textarea class="form-control" rows="3"
+                            placeholder="Describe your brand's mission and values..."></textarea>
                     </div>
                     <div class="mb-3 color-picker">
                         <label class="form-label">Primary Color</label>
@@ -105,42 +130,85 @@
                         <label class="form-label">Product Description</label>
                         <textarea class="form-control" rows="3" placeholder="Describe your product..."></textarea>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Price Range</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" placeholder="Min" class="form-control">
+                            <span class="input-group-text">-</span>
+                            <input type="number" placeholder="Max" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Product Category</label>
+                        <select class="form-select">
+                            <option>Electronics</option>
+                            <option>Fashion</option>
+                            <option>Home & Living</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- Demographics & Preview -->
+            <!-- Right Column -->
             <div class="col-lg-6">
+                <!-- Demographics Section -->
                 <div class="form-section">
                     <h3>🎯 Target Audience</h3>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Country</label>
-                            <select class="form-select">
-                                <option>USA</option>
-                                <option>UK</option>
-                                <option>Canada</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Language</label>
-                            <select class="form-select">
-                                <option>English</option>
-                                <option>Spanish</option>
-                                <option>French</option>
-                            </select>
-                        </div>
-                        <div class="col-12">
+                    <div class="dynamic-field-group">
+                        <div>
                             <label class="form-label">Age Range</label>
-                            <input type="range" class="form-range" min="13" max="65" step="1">
+                            <div class="age-range-container">
+                                <input type="number" class="form-control" placeholder="Min Age" min="13" max="100">
+                                <input type="number" class="form-control" placeholder="Max Age" min="13" max="100">
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Interests</label>
-                            <div class="d-flex flex-wrap gap-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox">
-                                    <label class="form-check-label">Technology</label>
-                                </div>
-                                <!-- Add more interests -->
+
+                        <div>
+                            <label class="form-label">Income Range</label>
+                            <select class="form-select">
+                                <option>Any</option>
+                                <option>$30k-$50k</option>
+                                <option>$50k-$100k</option>
+                                <option>$100k+</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="form-label">Interests & Behaviors</label>
+                        <div class="tag-input" id="interestContainer">
+                            <div class="tag">
+                                <span>Technology</span>
+                                <span class="tag-remove">×</span>
+                            </div>
+                            <div class="tag">
+                                <span>Fashion</span>
+                                <span class="tag-remove">×</span>
+                            </div>
+                            <div class="tag">
+                                <span>Sports</span>
+                                <span class="tag-remove">×</span>
+                            </div>
+                            <input type="text" class="tag-input-field" placeholder="Type to add custom interests"
+                                id="interestInput">
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="form-label">Gender Targeting</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="male">
+                                <label class="form-check-label" for="male">Male</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="female">
+                                <label class="form-check-label" for="female">Female</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="other">
+                                <label class="form-check-label" for="other">Other</label>
                             </div>
                         </div>
                     </div>
@@ -178,6 +246,46 @@
 
         document.getElementById('tagline').addEventListener('input', (e) => {
             document.getElementById('taglinePreview').textContent = e.target.value;
+        });
+
+        // Tag Management
+        const interestContainer = document.getElementById('interestContainer');
+        const interestInput = document.getElementById('interestInput');
+
+        interestInput.addEventListener('keydown', (e) => {
+            if (['Enter', ','].includes(e.key)) {
+                e.preventDefault();
+                const value = interestInput.value.trim();
+                if (value) {
+                    const tag = document.createElement('div');
+                    tag.className = 'tag';
+                    tag.innerHTML = `
+                        <span>${value}</span>
+                        <span class="tag-remove">×</span>
+                    `;
+                    tag.querySelector('.tag-remove').addEventListener('click', () => tag.remove());
+                    interestContainer.insertBefore(tag, interestInput);
+                    interestInput.value = '';
+                }
+            }
+        });
+
+        // Initialize existing tags
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.querySelector('.tag-remove').addEventListener('click', () => tag.remove());
+        });
+
+        // Age Range Validation
+        document.querySelectorAll('.age-range-container input').forEach(input => {
+            input.addEventListener('change', () => {
+                const minAge = document.querySelector('[placeholder="Min Age"]');
+                const maxAge = document.querySelector('[placeholder="Max Age"]');
+                if (parseInt(minAge.value) > parseInt(maxAge.value)) {
+                    alert("Max age should be greater than min age");
+                    minAge.value = '';
+                    maxAge.value = '';
+                }
+            });
         });
 
         function generateAd() {
