@@ -31,10 +31,43 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            overflow-x: hidden;
+            overflow: hidden;
+            /* Hide scrollbars during intro */
             perspective: 1200px;
         }
 
+        /* Preloader Styles */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            z-index: 10;
+            /* Higher z-index than everything else */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .preloader-image {
+            position: absolute;
+            width: 150px;
+            /* Initial size */
+            height: 100px;
+            /* Maintain aspect ratio */
+            background-size: cover;
+            animation: moveImage 5s linear infinite;
+            opacity: 0.7;
+            /* Adjust as needed */
+            will-change: transform, opacity;
+            /* Performance optimization */
+        }
+
+
+        /* Main Content Styles */
         .main-content {
             text-align: center;
             z-index: 5;
@@ -43,14 +76,14 @@
             max-width: 1000px;
             margin: auto;
             transform-style: preserve-3d;
+            display: none;
+            /* Initially hidden */
         }
 
-        /* Logo Styling */
         .logo {
             font-size: 7rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
-            /* Reduced margin */
             color: var(--accent-blue);
             text-shadow: 0 0 25px var(--glow-color);
             animation: pulse 2.5s infinite;
@@ -58,20 +91,17 @@
             opacity: 0;
             animation: fadeInLogo 2s forwards;
             position: relative;
-            /* For absolute positioning of pseudo-elements */
         }
 
         .logo::before,
         .logo::after {
             content: "AdGenie";
-            /*  Important: Use the same text as the logo */
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            /* Makes pseudo elements non-interactive*/
 
         }
 
@@ -89,19 +119,15 @@
             animation: glitch2 2s infinite alternate-reverse;
         }
 
-        /* Tagline Styling */
         .tagline {
             font-size: 2.2rem;
             margin-bottom: 1rem;
-            /* Reduced margin */
             color: rgba(255, 255, 255, 0.9);
             letter-spacing: 1.5px;
             transform: translateZ(60px);
             opacity: 0;
             animation: fadeInTagline 2s 1s forwards;
             white-space: nowrap;
-            /* Prevent line breaks */
-
         }
 
         .tagline-sub {
@@ -114,7 +140,6 @@
 
         }
 
-        /* Button Styling */
         .btn-start {
             background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
             color: var(--dark-bg);
@@ -131,7 +156,6 @@
             transform: translateZ(80px);
             opacity: 0;
             animation: fadeInButton 1s 2.5s forwards;
-            /* Delayed further */
         }
 
         .btn-start:hover {
@@ -240,7 +264,7 @@
             top: 85%;
             left: 5%;
             animation-delay: 1.8s;
-            font-size: 0.7rem;
+            font-size: 0.7rem
         }
 
         .star-9 {
@@ -519,7 +543,6 @@
             }
         }
 
-        /* Glitch Effect */
         @keyframes glitch1 {
             0% {
                 transform: translate(0);
@@ -576,6 +599,29 @@
             animation: fadeIn 1.5s ease-out;
         }
 
+        /* Image Preloader Animation */
+        @keyframes moveImage {
+            0% {
+                transform: translate(-50vw, -50vh) scale(0.5);
+            }
+
+            25% {
+                transform: translate(50vw, -50vh) scale(0.7);
+            }
+
+            50% {
+                transform: translate(50vw, 50vh) scale(1);
+            }
+
+            75% {
+                transform: translate(-50vw, 50vh) scale(0.7);
+            }
+
+            100% {
+                transform: translate(-50vw, -50vh) scale(0.5);
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .logo {
@@ -609,12 +655,41 @@
                 bottom: -125px;
                 right: -125px;
             }
+
+            .preloader-image {
+                width: 100px;
+                /* Smaller images on mobile */
+                height: 66px;
+            }
+        }
+
+        .element {
+            scrollbar-width: none;
+            /* Hides the scrollbar */
+        }
+
+        .element::-webkit-scrollbar {
+            display: none;
+            /* Hides the scrollbar */
         }
     </style>
 </head>
 
 <body>
-    <!-- Background Elements -->
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <!-- Images will be added here dynamically -->
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content animated" id="mainContent">
+        <div class="logo">AdGenie</div>
+        <p class="tagline">Ignite Your Brand's Potential</p>
+        <p class="tagline-sub">Unlock hyper-targeted campaigns for global audiences.</p>
+        <button class="btn-start" id="startButton">Launch My Campaign</button>
+    </div>
+
+    <!-- Background Elements (Stars, Lines, Orbs, Particles) - Keep these outside of .main-content -->
     <div class="bg-element star star-1"><i class="fas fa-star"></i></div>
     <div class="bg-element star star-2"><i class="fas fa-star"></i></div>
     <div class="bg-element star star-3"><i class="fas fa-star"></i></div>
@@ -639,17 +714,40 @@
     <div class="bg-element particle particle-5"></div>
     <div class="bg-element particle particle-6"></div>
 
-    <!-- Main Content -->
-    <div class="main-content animated">
-        <div class="logo">AdGenie</div>
-        <p class="tagline">Ads, reimagined.</p>
-        <p class="tagline-sub">Create ads targeting 1000s of audiences with nuances around the world.</p>
-        <button class="btn-start" id="startButton">Let's Get Started</button>
-    </div>
-
     <script>
-        document.getElementById('startButton').addEventListener('click', function () {
-            window.location.href = "ad_form.html"; // IMPORTANT: Change to your form page
+        document.addEventListener('DOMContentLoaded', function () {
+            const preloader = document.getElementById('preloader');
+            const mainContent = document.getElementById('mainContent');
+            const numImages = 20; //  Number of images.  Make sure you have 01.png to 20.png (at least)
+            const imageDir = 'demo_images/'; // Path to your image directory
+
+            // Create and add image elements to the preloader
+            for (let i = 1; i <= numImages; i++) {
+                const img = document.createElement('div');
+                img.classList.add('preloader-image');
+                img.style.backgroundImage = `url(${imageDir}${String(i).padStart(2, '0')}.png)`;
+
+                // Randomize initial position and animation delay
+                img.style.left = `${Math.random() * 100}vw`;
+                img.style.top = `${Math.random() * 100}vh`;
+                img.style.animationDelay = `${Math.random() * 5}s`; //  Vary the animation delay
+
+                preloader.appendChild(img);
+            }
+
+            // Simulate loading time (you can replace this with actual loading logic)
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+                mainContent.style.display = 'block';
+                document.body.style.overflow = 'auto';
+
+            }, 6000); //  6 seconds preloader duration
+
+            // Event listener for button
+            document.getElementById('startButton').addEventListener('click', function () {
+                window.location.href = "ad_form.html"; // IMPORTANT: Change to your form page
+            });
         });
     </script>
 </body>
